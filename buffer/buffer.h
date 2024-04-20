@@ -12,7 +12,7 @@
 class Buffer
 {
 public:
-    Buffer(int bufferSize = 1024);
+    Buffer(int bufferSize);
     ~Buffer() = default;
 
     size_t readableBytes() const;    // 返回可写字节数
