@@ -1,25 +1,25 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
-#include <iostream>
-#include <vector>
+#include <sys/uio.h>  //readv
+#include <unistd.h>
+
 #include <atomic>
 #include <cassert>
 #include <cstring>
-#include <unistd.h>
-#include <sys/uio.h> //readv
+#include <iostream>
+#include <vector>
 
-class Buffer
-{
-public:
+class Buffer {
+   public:
     Buffer(int bufferSize = 1024);
     ~Buffer() = default;
 
-    size_t readableBytes() const;    // 返回可写字节数
-    size_t writableBytes() const;   // 返回可读字节数
-    size_t prependableBytes() const; // 返回已读字节数
+    size_t readableBytes() const;     // 返回可写字节数
+    size_t writableBytes() const;     // 返回可读字节数
+    size_t prependableBytes() const;  // 返回已读字节数
 
-    const char *peek() const; // 返回读取位置的指针
+    const char *peek() const;  // 返回读取位置的指针
 
     void retrieve(size_t len);
     void retrieveUntil(const char *end);
@@ -36,15 +36,15 @@ public:
     ssize_t writeFd(int fd, int *saveErrno);
     ssize_t readFd(int fd, int *saveErrno);
 
-private:
+   private:
     char *beginPtr_();
     const char *beginPtr_() const;
     void makeSpace_(size_t len);
 
-private:
+   private:
     std::vector<char> buff_;
     std::atomic<size_t> readPos_;
     std::atomic<size_t> writePos_;
 };
 
-#endif // BUFFER_H
+#endif  // BUFFER_H
