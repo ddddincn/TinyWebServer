@@ -1,4 +1,2 @@
 .vscode/
 test.cpp
-http/httprequest.cpp
-http/httprequest.h
