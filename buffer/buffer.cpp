@@ -1,6 +1,6 @@
 #include "buffer.h"
 
-Buffer::Buffer(int bufferSize = 1024) : buff_(bufferSize), readPos_(0), writePos_(0)
+Buffer::Buffer(int bufferSize) : buff_(bufferSize), readPos_(0), writePos_(0)
 {
 }
 

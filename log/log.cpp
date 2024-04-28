@@ -30,7 +30,7 @@ Log::~Log()
     }
 }
 
-void Log::init(int level, const char *path, const char *suffix, int maxCapacity = 1024)
+void Log::init(int level, const char *path, const char *suffix, int maxCapacity)
 {
     level_ = level;
     path_ = path;

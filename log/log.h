@@ -14,7 +14,7 @@
 class Log
 {
 public:
-    void init(int level, const char *path = "./log", const char *suffix = ".log", int maxCapacity);
+    void init(int level, const char *path = "./log", const char *suffix = ".log", int maxCapacity = 1024);
     static Log *instance(); // 单例模式
     void flushLogThread();
     void write(int leve, const char *format, ...);

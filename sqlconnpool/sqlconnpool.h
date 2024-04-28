@@ -8,13 +8,13 @@
 #include <queue>
 #include <cassert>
 
-#include "./log/log.h"
+#include "../log/log.h"
 
 class SqlConnPool
 {
 public:
     static SqlConnPool *instance();
-    void init(const char *host, int port, const char *user, const char *pwd, const char *dbName, int connSize);
+    void init(const char *host, int port, const char *user, const char *pwd, const char *dbName, int connSize = 16);
 
     MYSQL *getConn();
     void freeConn(MYSQL *conn);

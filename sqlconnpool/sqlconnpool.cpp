@@ -11,7 +11,7 @@ SqlConnPool *SqlConnPool::instance()
     return &inst;
 }
 
-void SqlConnPool::init(const char *host, int port, const char *user, const char *passwd, const char *db, int connSize = 16)
+void SqlConnPool::init(const char *host, int port, const char *user, const char *passwd, const char *db, int connSize)
 {
     assert(connSize > 0);
     MAX_CONN_ = connSize;

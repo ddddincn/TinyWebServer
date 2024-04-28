@@ -10,7 +10,7 @@ template <typename T>
 class BlockQueue
 {
 public:
-    explicit BlockQueue(size_t maxCapacity);
+    explicit BlockQueue(size_t maxCapacity = 1024);
     ~BlockQueue();
 
     void clear();
@@ -37,7 +37,7 @@ private:
 };
 
 template <typename T>
-BlockQueue<T>::BlockQueue(size_t maxCapacity = 1024) : capacity_(maxCapacity)
+BlockQueue<T>::BlockQueue(size_t maxCapacity) : capacity_(maxCapacity)
 {
     assert(maxCapacity > 0);
     isClose_ = false;
