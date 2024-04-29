@@ -118,12 +118,10 @@ void HttpRequest::parseHeader_(const std::string &line) {
         header_[subMatch[1]] = subMatch[2];
     } else {
         state_ = BODY;
-        printf("BODY\n");
     }
 }
 
 void HttpRequest::parseBody_(const std::string &line) {
-    LOG_DEBUG("parseBody_ : %s", line.c_str());
     body_ = line;
     parsePost_();
     state_ = FINISH;
@@ -214,14 +212,14 @@ bool HttpRequest::userVerify(const std::string &name, const std::string &pwd, bo
     SqlConnRAII(&conn, SqlConnPool::instance());
     assert(conn);
 
-    bool flag;  // 记录是否登录
+    bool flag;
     unsigned int j = 0;
     char sql[256] = {0};
     MYSQL_FIELD *fields = nullptr;
     MYSQL_RES *res = nullptr;
 
     if (!isLogin) {
-        flag = true;  // 表明进行注册操作
+        flag = true;
     }
 
     snprintf(sql, 256, "SELECT username, password FROM user WHERE username = '%s' LIMIT 1", name.c_str());
@@ -239,14 +237,15 @@ bool HttpRequest::userVerify(const std::string &name, const std::string &pwd, bo
 
         if (isLogin) {
             if (pwd == password) {
+                LOG_INFO("%s LOGIN SUCCESS",row[0]);
                 return true;
             } else {
                 flag = false;
-                LOG_INFO("PASSWORD ERROR");
+                LOG_INFO("%s PASSWORD ERROR",row[0]);
             }
         } else {
             flag = false;
-            LOG_INFO("USERNAME USED");
+            LOG_INFO("%s USERNAME USED",row[0]);
         }
     }
     mysql_free_result(res);
