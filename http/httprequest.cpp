@@ -151,10 +151,8 @@ void HttpRequest::parsePost_() {
                 bool isLogin = (tag == 1);
                 if (userVerify(post_["username"], post_["password"], isLogin)) {
                     path_ = "/welcome.html";
-                    std::cout << "/welcome.html" << std::endl;
                 } else {
                     path_ = "/error.html";
-                    std::cout << "/error.html" << std::endl;
                 }
             }
         }
