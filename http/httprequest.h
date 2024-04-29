@@ -14,7 +14,7 @@
 #include "../sqlconnpool/sqlconnRAII.h"
 
 class HttpRequest {
-   public:
+public:
     enum PARSE_STATE {
         REQUEST_LINE,
         HEADERS,
@@ -46,7 +46,7 @@ class HttpRequest {
 
     bool isKeepAlive() const;
 
-   private:
+private:
     bool parseRequestLine_(const std::string &line);
     void parseHeader_(const std::string &line);
     void parseBody_(const std::string &line);

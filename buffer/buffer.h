@@ -11,7 +11,7 @@
 #include <vector>
 
 class Buffer {
-   public:
+public:
     Buffer(int bufferSize = 1024);
     ~Buffer() = default;
 
@@ -36,12 +36,12 @@ class Buffer {
     ssize_t writeFd(int fd, int *saveErrno);
     ssize_t readFd(int fd, int *saveErrno);
 
-   private:
+private:
     char *beginPtr_();
     const char *beginPtr_() const;
     void makeSpace_(size_t len);
 
-   private:
+private:
     std::vector<char> buff_;
     std::atomic<size_t> readPos_;
     std::atomic<size_t> writePos_;

@@ -2,14 +2,13 @@
 #define THREADPOOL_H
 
 #include <cassert>
+#include <condition_variable>
+#include <functional>
 #include <mutex>
 #include <queue>
 #include <thread>
-#include <functional>
-#include <condition_variable>
 
-class ThreadPool
-{
+class ThreadPool {
 public:
     explicit ThreadPool(size_t threadNum = 8);
     ThreadPool() = default;
@@ -20,8 +19,7 @@ public:
     void addTask(T &&task);
 
 private:
-    struct Pool
-    {
+    struct Pool {
         std::queue<std::function<void()>> tasks;
         std::mutex mtx;
         std::condition_variable cond;
@@ -30,12 +28,10 @@ private:
     std::shared_ptr<Pool> pool_;
 };
 
-ThreadPool::ThreadPool(size_t threadNum) : pool_(std::make_shared<Pool>())
-{
+ThreadPool::ThreadPool(size_t threadNum) : pool_(std::make_shared<Pool>()) {
     assert(threadNum > 0);
-    for (size_t i = 0; i < threadNum; i++)
-    {
-        std::thread([pool = pool_](){
+    for (size_t i = 0; i < threadNum; i++) {
+        std::thread([pool = pool_]() {
                 std::unique_lock<std::mutex> locker(pool->mtx);
                 while (!pool->isClose)
                 {
@@ -55,10 +51,8 @@ ThreadPool::ThreadPool(size_t threadNum) : pool_(std::make_shared<Pool>())
     }
 }
 
-ThreadPool::~ThreadPool()
-{
-    if(static_cast<bool>(pool_))
-    {
+ThreadPool::~ThreadPool() {
+    if (static_cast<bool>(pool_)) {
         {
             std::lock_guard<std::mutex> locker(pool_->mtx);
             pool_->isClose = true;
@@ -68,13 +62,12 @@ ThreadPool::~ThreadPool()
 }
 
 template <typename T>
-void ThreadPool::addTask(T &&task)
-{
+void ThreadPool::addTask(T &&task) {
     {
         std::lock_guard<std::mutex> locker(pool_->mtx);
-        pool_->tasks.emplace(std::forward<T>(task));//这里使用完美转发
+        pool_->tasks.emplace(std::forward<T>(task));  // 这里使用完美转发
     }
     pool_->cond.notify_one();
 }
 
-#endif // THREADPOOL_H
+#endif  // THREADPOOL_H

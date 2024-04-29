@@ -4,7 +4,7 @@
 #include "sqlconnpool.h"
 
 class SqlConnRAII {
-   public:
+public:
     SqlConnRAII(MYSQL **conn, SqlConnPool *connPool) {
         assert(connPool);
         *conn = connPool->getConn();
@@ -18,7 +18,7 @@ class SqlConnRAII {
         }
     }
 
-   private:
+private:
     MYSQL *conn_;
     SqlConnPool *connPool_;
 };

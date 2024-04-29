@@ -13,7 +13,7 @@
 #include "blockqueue.h"
 
 class Log {
-   public:
+public:
     void init(int level, const char *path = "./log", const char *suffix = ".log", int maxCapacity = 1024);
     static Log *instance();  // 单例模式
     void flushLogThread();
@@ -24,13 +24,13 @@ class Log {
     void setLevel(int level);
     bool isClose();
 
-   private:
+private:
     Log();
     ~Log();
     void appendLogLevelTitle(int level);
     void asyncWrite();
 
-   private:
+private:
     static const int MAX_PATH_LEN = 256;
     static const int MAX_NAME_LEN = 256;
     static const int MAX_LINES = 50000;

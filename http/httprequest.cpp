@@ -235,15 +235,15 @@ bool HttpRequest::userVerify(const std::string &name, const std::string &pwd, bo
 
         if (isLogin) {
             if (pwd == password) {
-                LOG_INFO("%s LOGIN SUCCESS",row[0]);
+                LOG_INFO("%s LOGIN SUCCESS", row[0]);
                 return true;
             } else {
                 flag = false;
-                LOG_INFO("%s PASSWORD ERROR",row[0]);
+                LOG_INFO("%s PASSWORD ERROR", row[0]);
             }
         } else {
             flag = false;
-            LOG_INFO("%s USERNAME USED",row[0]);
+            LOG_INFO("%s USERNAME USED", row[0]);
         }
     }
     mysql_free_result(res);

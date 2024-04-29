@@ -12,7 +12,7 @@
 #include "../log/log.h"
 
 class SqlConnPool {
-   public:
+public:
     static SqlConnPool *instance();
     void init(const char *host, int port, const char *user, const char *pwd, const char *dbName, int connSize = 16);
 
@@ -21,11 +21,11 @@ class SqlConnPool {
     int getFreeConnCount();
     void close();
 
-   private:
+private:
     SqlConnPool() = default;
     ~SqlConnPool();
 
-   private:
+private:
     int MAX_CONN_;
 
     std::queue<MYSQL *> connQue_;

@@ -8,7 +8,7 @@
 
 template <typename T>
 class BlockQueue {
-   public:
+public:
     explicit BlockQueue(size_t maxCapacity = 1024);
     ~BlockQueue();
 
@@ -26,7 +26,7 @@ class BlockQueue {
     size_t size();
     size_t capacity();
 
-   private:
+private:
     std::queue<T> que_;
     std::mutex mtx_;
     size_t capacity_;
