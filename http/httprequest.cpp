@@ -30,7 +30,6 @@ bool HttpRequest::parse(Buffer &buff) {
         const char *lineEnd = std::search(buff.peek(), buff.peek() + buff.readableBytes(), CRLF, CRLF + 2);  // 从缓存区中找到行结束位置
         std::string line(buff.peek(), lineEnd);                                                              // 从buff中取出一行
 
-        printf("line : %s\n", line.c_str());
         switch (state_) {
             case REQUEST_LINE:
                 if (!parseRequestLine_(line)) {
@@ -99,7 +98,6 @@ bool HttpRequest::isKeepAlive() const {
 }
 
 bool HttpRequest::parseRequestLine_(const std::string &line) {
-    LOG_DEBUG("parseRequestLine_ : %s", line.c_str());
     std::regex patten("^([^ ]*) ([^ ]*) HTTP/([^ ]*)$");  // 匹配类似于 "GET /index.html HTTP/1.1"
     std::smatch subMatch;                                 // 用于存放正则匹配结果
     if (std::regex_match(line, subMatch, patten)) {
@@ -114,7 +112,6 @@ bool HttpRequest::parseRequestLine_(const std::string &line) {
 }
 
 void HttpRequest::parseHeader_(const std::string &line) {
-    LOG_DEBUG("parseHeader_ : %s", line.c_str());
     std::regex patten("^([^:]*): ?(.*)$");  // 匹配类似于 "key: value"
     std::smatch subMatch;
     if (std::regex_match(line, subMatch, patten)) {
@@ -156,8 +153,10 @@ void HttpRequest::parsePost_() {
                 bool isLogin = (tag == 1);
                 if (userVerify(post_["username"], post_["password"], isLogin)) {
                     path_ = "/welcome.html";
+                    std::cout << "/welcome.html" << std::endl;
                 } else {
                     path_ = "/error.html";
+                    std::cout << "/error.html" << std::endl;
                 }
             }
         }
@@ -193,7 +192,6 @@ void HttpRequest::parseFromUrlencoded_() {
                 value = body_.substr(j, i - j);
                 j = i + 1;
                 post_[key] = value;
-                LOG_DEBUG("%s = %s", key.c_str(), value.c_str());
                 break;
             default:
                 break;
@@ -229,13 +227,11 @@ bool HttpRequest::userVerify(const std::string &name, const std::string &pwd, bo
     snprintf(sql, 256, "SELECT username, password FROM user WHERE username = '%s' LIMIT 1", name.c_str());
     LOG_DEBUG("%s", sql);
 
-    if (mysql_query(conn, sql)) {
+    if (mysql_query(conn, sql) && isLogin) {
         mysql_free_result(res);
         return false;
     }
     res = mysql_store_result(conn);
-    j = mysql_num_fields(res);
-    fields = mysql_fetch_fields(res);
 
     while (MYSQL_ROW row = mysql_fetch_row(res)) {
         LOG_DEBUG("MYSQL ROW: %s %s", row[0], row[1]);
