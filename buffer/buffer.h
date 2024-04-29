@@ -32,6 +32,7 @@ public:
     void ensureWriteable(size_t len);
 
     void append(const char *data, size_t len);
+    void append(std::string data);
 
     ssize_t writeFd(int fd, int *saveErrno);
     ssize_t readFd(int fd, int *saveErrno);

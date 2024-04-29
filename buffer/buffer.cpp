@@ -63,6 +63,10 @@ void Buffer::append(const char *data, size_t len) {
     hasWritten(len);
 }
 
+void Buffer::append(std::string data) {
+    append(data.data(), data.size());
+}
+
 ssize_t Buffer::writeFd(int fd, int *saveErrno) {
     char buff[65535];
     struct iovec iov[2];
