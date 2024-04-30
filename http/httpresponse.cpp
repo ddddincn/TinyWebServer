@@ -137,7 +137,6 @@ void HttpResponse::addContent_(Buffer &buff) {
     int srcFd = open((srcDir_ + path_).c_str(), O_RDONLY);
     if (srcFd < 0) {
         errorContent(buff, "File Not Found!");
-        close(srcFd);
         return;
     }
 
