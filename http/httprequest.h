@@ -1,5 +1,5 @@
-#ifndef HTTPREQUEST_H
-#define HTTPREQUEST_H
+#ifndef HTTP_REQUEST_H
+#define HTTP_REQUEST_H
 
 #include <errno.h>
 #include <mysql/mysql.h>
@@ -67,4 +67,4 @@ private:
     static int converHex(char ch);
 };
 
-#endif  // HTTPREQUEST_H
+#endif  // HTTP_REQUEST_H

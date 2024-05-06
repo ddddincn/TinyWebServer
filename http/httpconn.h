@@ -1,5 +1,5 @@
-#ifndef HTTPCONN_H
-#define HTTPCONN_H
+#ifndef HTTP_CONN_H
+#define HTTP_CONN_H
 
 #include <arpa/inet.h>
 
@@ -53,4 +53,4 @@ private:
     HttpResponse response_;
 };
 
-#endif  // HTTPCONN_H
+#endif  // HTTP_CONN_H

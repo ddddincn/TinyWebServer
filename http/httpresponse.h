@@ -1,5 +1,5 @@
-#ifndef HTTPRESPONSE_H
-#define HTTPRESPONSE_H
+#ifndef HTTP_RESPONSE_H
+#define HTTP_RESPONSE_H
 
 #include <fcntl.h>
 #include <sys/mman.h>
