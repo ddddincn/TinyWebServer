@@ -22,7 +22,6 @@ void HttpConn::init(int sockFd, const sockaddr_in &addr) {
     readBuff_.retrieveAll();
     writeBuff_.retrieveAll();
     isClose_ = false;
-    printf("conn connect fd = %d\n", fd_);
     LOG_INFO("Client[%d](%s:%d) in,userCount:%d", fd_, getIP(), getPort(), (int)userCount);
 }
 
@@ -30,7 +29,6 @@ ssize_t HttpConn::read(int *saveErrno) {
     ssize_t len = -1;
     do {
         len = readBuff_.readFd(fd_, saveErrno);
-        printf("read fd = %d  len = %ld\n", fd_, len);
         if (len <= 0) {
             break;
         }
@@ -67,7 +65,6 @@ ssize_t HttpConn::write(int *saveErrno) {
 }
 
 void HttpConn::close() {
-    printf("conn close fd = %d\n", fd_);
     response_.unmapFile();
     if (isClose_ == false) {
         isClose_ = true;
