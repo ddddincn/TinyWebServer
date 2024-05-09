@@ -6,8 +6,8 @@ int main() {
 
     WebServer server(
         1316, 3, 60000, false,                                     /* 端口 ET模式 timeoutMs 优雅退出  */
-        "47.76.100.96", 3306, "root", "mysql_npCZbp", "webserver", /* Mysql配置 */
-        12, 6, true, 1, 0);                                     /* 连接池数量 线程池数量 日志开关 日志等级 日志异步队列容量 */
+        "host", 3306, "dbuser", "dbpasswd", "dbname", /* Mysql配置 */
+        12, 6, true, 0, 1024);                                     /* 连接池数量 线程池数量 日志开关 日志等级 日志异步队列容量 */
     server.start();
 }
 

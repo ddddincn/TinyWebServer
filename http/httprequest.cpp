@@ -107,7 +107,6 @@ bool HttpRequest::parseRequestLine_(const std::string &line) {
         state_ = HEADERS;
         return true;
     }
-    LOG_ERROR("RequestLine ERROR");
     return false;
 }
 
@@ -165,10 +164,10 @@ void HttpRequest::parseFromUrlencoded_() {
     }
 
     std::string key, value;
-    int i = 0, j = 0;
+    std::string::size_type i = 0, j = 0;
     int num = 0;
 
-    for (i; i < body_.size(); i++) {
+    for (; i < body_.size(); i++) {
         char ch = body_[i];
         switch (ch) {
             case '=':
@@ -211,9 +210,7 @@ bool HttpRequest::userVerify(const std::string &name, const std::string &pwd, bo
     assert(conn);
 
     bool flag;
-    unsigned int j = 0;
     char sql[256] = {0};
-    MYSQL_FIELD *fields = nullptr;
     MYSQL_RES *res = nullptr;
 
     if (!isLogin) {

@@ -3,7 +3,7 @@
 WebServer::WebServer(int port, int trigMode, int timeout, bool optLinger,
                      const char* sqlHost, int sqlPort, const char* sqlUser, const char* sqlPwd, const char* dbName,
                      int connPoolNum, int threadNum,
-                     bool openLog, int logLevel, int logQueSize) : port_(port), timeout_(timeout), openLinger_(optLinger), timer_(new HeapTimer()), threadpool_(new ThreadPool(threadNum)), epoller_(new Epoller()) {
+                     bool openLog, int logLevel, int logQueSize) : port_(port), openLinger_(optLinger), timeout_(timeout), timer_(new HeapTimer()), threadpool_(new ThreadPool(threadNum)), epoller_(new Epoller()) {
     srcDir_ = getcwd(nullptr, 256);
     assert(srcDir_);
     strncat(srcDir_, "/resources/", 16);
