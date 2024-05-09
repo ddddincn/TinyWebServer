@@ -161,7 +161,7 @@ void HttpResponse::errorHtml_() {
 
 std::string HttpResponse::GetFileType_() {
     std::string::size_type idx = path_.find_last_of('.');
-    if (idx != std::string::npos) {
+    if (idx == std::string::npos) {
         return "text/plain";
     }
     std::string suffix = path_.substr(idx);
