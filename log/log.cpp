@@ -78,7 +78,7 @@ void Log::flushLogThread() {
     Log::instance()->asyncWrite();
 }
 
-void Log::write(int leve, const char *format, ...) {
+void Log::write(int level, const char *format, ...) {
     struct timeval now;  // 这个结构体可以获取精度更高的时间
     gettimeofday(&now, nullptr);
     time_t tSec = now.tv_sec;
@@ -116,7 +116,7 @@ void Log::write(int leve, const char *format, ...) {
         int n = snprintf(buff_.beginWrite(), 128, "%04d-%02d-%02d %02d:%02d:%02d.%06ld",
                          t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, now.tv_usec);  // 先写入时间
         buff_.hasWritten(n);
-        appendLogLevelTitle(level_);
+        appendLogLevelTitle(level);
 
         va_start(vaList, format);
         int m = vsnprintf(buff_.beginWrite(), buff_.writableBytes(), format, vaList);

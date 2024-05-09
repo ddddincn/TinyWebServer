@@ -67,7 +67,7 @@ void Buffer::append(std::string data) {
     append(data.data(), data.size());
 }
 
-ssize_t Buffer::writeFd(int fd, int *saveErrno) {
+ssize_t Buffer::readFd(int fd, int *saveErrno) {
     char buff[65535];
     struct iovec iov[2];
     const size_t writable = writableBytes();
@@ -89,7 +89,7 @@ ssize_t Buffer::writeFd(int fd, int *saveErrno) {
     return len;
 }
 
-ssize_t Buffer::readFd(int fd, int *saveErrno) {
+ssize_t Buffer::writeFd(int fd, int *saveErrno) {
     size_t readSize = readableBytes();
     ssize_t len = write(fd, peek(), readSize);
     if (len < 0) {

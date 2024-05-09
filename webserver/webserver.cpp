@@ -11,6 +11,7 @@ WebServer::WebServer(int port, int trigMode, int timeout, bool optLinger,
     HttpConn::srcDir = srcDir_;
     SqlConnPool::instance()->init(sqlHost, sqlPort, sqlUser, sqlPwd, dbName, connPoolNum);
 
+    isClose_ = false;
     initEventMode_(trigMode);
     if (!initSocket_()) {
         isClose_ = true;
@@ -54,14 +55,18 @@ void WebServer::start() {
             int fd = epoller_->getEventFd(i);
             uint32_t events = epoller_->getEvents(i);
             if (fd == listenFd_) {
+                printf("fd == listenFd_  fd = %d\n", fd);
                 dealListen_();
             } else if (events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR)) {
+                printf("events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR)  fd = %d\n", fd);
                 assert(users_.count(fd) > 0);
                 closeConn_(&users_[fd]);
             } else if (events & EPOLLIN) {
+                printf("events & EPOLLIN fd = %d\n", fd);
                 assert(users_.count(fd) > 0);
                 dealRead_(&users_[fd]);
             } else if (events & EPOLLOUT) {
+                printf("events & EPOLLOUT fd = %d\n", fd);
                 assert(users_.count(fd) > 0);
                 dealWrite_(&users_[fd]);
             } else {
@@ -80,6 +85,7 @@ bool WebServer::initSocket_() {
     int ret;
     struct sockaddr_in addr;
     if (port_ > 65535 || port_ < 1024) {
+        printf("Port:%d Error!\n", port_);
         LOG_ERROR("Port:%d Error!", port_);
         return false;
     }
@@ -95,12 +101,14 @@ bool WebServer::initSocket_() {
 
     listenFd_ = socket(AF_INET, SOCK_STREAM, 0);
     if (listenFd_ < 0) {
+        printf("Create Socket Error!\n");
         LOG_ERROR("Create Socket Error!");
         return false;
     }
 
     ret = setsockopt(listenFd_, SOL_SOCKET, SO_LINGER, &optLinger, sizeof(optLinger));
     if (ret < 0) {
+        printf("Init Linger Error!\n");
         LOG_ERROR("Init Linger Error!");
         close(listenFd_);
         return false;
@@ -108,8 +116,9 @@ bool WebServer::initSocket_() {
 
     int optval = 1;
     // 端口复用
-    ret = setsockopt(listenFd_, SOL_SOCKET, SO_REUSEADDR, (const void*)optval, sizeof(int));
+    ret = setsockopt(listenFd_, SOL_SOCKET, SO_REUSEADDR, (const void*)&optval, sizeof(int));
     if (ret == -1) {
+        printf("Set Socket Setsockopt Error!\n");
         LOG_ERROR("Set Socket Setsockopt Error!");
         close(listenFd_);
         return false;
@@ -117,6 +126,7 @@ bool WebServer::initSocket_() {
 
     ret = bind(listenFd_, (struct sockaddr*)&addr, sizeof(addr));
     if (ret < 0) {
+        printf("Bind Port:%d Error!\n", port_);
         LOG_ERROR("Bind Port:%d Error!", port_);
         close(listenFd_);
         return false;
@@ -124,6 +134,7 @@ bool WebServer::initSocket_() {
 
     ret = listen(listenFd_, 6);
     if (ret < 0) {
+        printf("Listen Port:%d Error!\n", port_);
         LOG_ERROR("Listen Port:%d Error!", port_);
         close(listenFd_);
         return false;
@@ -131,6 +142,7 @@ bool WebServer::initSocket_() {
 
     ret = epoller_->addFd(listenFd_, listenEvent_ | EPOLLIN);
     if (ret == 0) {
+        printf("Add Listen Error!\n");
         LOG_ERROR("Add Listen Error!");
         close(listenFd_);
         return false;
@@ -164,6 +176,7 @@ void WebServer::initEventMode_(int trigMode) {
 }
 
 void WebServer::addClient(int fd, struct sockaddr_in addr) {
+    // printf("WebServer::addClient() fd = %d \n",fd);
     assert(fd > 0);
     users_[fd].init(fd, addr);
     if (timeout_ > 0) {
@@ -185,6 +198,12 @@ void WebServer::dealListen_() {
             sendError_(fd, "Server Busy!");
             LOG_WARN("Server Busy!");
             return;
+        }
+        if (fcntl(fd, F_GETFL) == -1 && errno == EBADF) {
+            printf("WebServer::dealListen_()  fd = %d 无效\n", fd);
+        }
+        else{
+            printf("WebServer::dealListen_()  fd = %d 有效\n", fd);
         }
         addClient(fd, addr);
     } while (listenEvent_ & EPOLLET);
@@ -226,12 +245,14 @@ void WebServer::closeConn_(HttpConn* client) {
 }
 
 void WebServer::onRead_(HttpConn* client) {
+    // printf("WebServer::onRead_\n");
     assert(client);
     int ret = -1;
     int readErrno = 0;
     ret = client->read(&readErrno);
     if (ret <= 0 && readErrno != EAGAIN) {
         closeConn_(client);
+        // printf("return %d  %d\n",ret,readErrno);
         return;
     }
     onProcess(client);
@@ -257,6 +278,7 @@ void WebServer::onWrite_(HttpConn* client) {
 }
 
 void WebServer::onProcess(HttpConn* client) {
+    // printf("WebServer::onProcess\n");
     if (client->process()) {
         epoller_->modFd(client->getFd(), connEvent_ | EPOLLOUT);
     } else {

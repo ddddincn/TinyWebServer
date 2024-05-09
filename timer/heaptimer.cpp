@@ -1,5 +1,7 @@
 #include "heaptimer.h"
 
+#include <iostream>
+
 HeapTimer::HeapTimer() {
     heap_.reserve(64);
 }
@@ -9,12 +11,21 @@ HeapTimer::~HeapTimer() {
 }
 
 void HeapTimer::adjust(int id, int timeout) {  // 调整指定的id节点
+    // for (auto& node : heap_) {
+    //     printf("node.id = %d\n", node.id);
+    // }
+    // for (auto& [id, index] : ref_) {
+    //     printf("{%d,%ld} ", id, index);
+    // }
+    // printf("\n");
+
     assert(!heap_.empty() && ref_.count(id) > 0);
     heap_[ref_[id]].expires = Clock::now() + MS(timeout);
-    siftdown_(id, heap_.size());
+    siftdown_(ref_[id], heap_.size());
 }
 
 void HeapTimer::add(int id, int timeout, const TimeoutCallBack& cb) {
+    //printf("HeapTimer::add() fd = %d\n", id);
     assert(id >= 0);
     size_t i;
     if (ref_.count(id) == 0) {  // 插入新节点
@@ -66,7 +77,16 @@ void HeapTimer::pop() {
     del_(0);
 }
 
-int getNextTick() {
+int HeapTimer::getNextTick() {
+    tick();
+    size_t res = -1;
+    if (!heap_.empty()) {
+        res = std::chrono::duration_cast<MS>(heap_.front().expires - Clock::now()).count();
+        if (res < 0) {
+            res = 0;
+        }
+    }
+    return res;
 }
 
 void HeapTimer::del_(size_t i) {
@@ -99,7 +119,7 @@ void HeapTimer::siftup_(size_t i) {
 
 bool HeapTimer::siftdown_(size_t index, size_t n) {
     assert(index >= 0 && index < heap_.size());
-    assert(n >= 0 && n < heap_.size());
+    assert(n >= 0 && n <= heap_.size());
     size_t i = index;
     size_t j = i * 2 + 1;  // 子节点下标
     while (j < n) {
